@@ -1,0 +1,19 @@
+<!--
+  Snippet to merge into ios/App/App/Info.plist after `npx cap add ios`.
+  Add these entries inside the top-level <dict> element.
+-->
+
+<key>NSBluetoothAlwaysUsageDescription</key>
+<string>FallMobile uses Bluetooth to form a phone-to-phone mesh with nearby peers.</string>
+
+<key>NSBluetoothPeripheralUsageDescription</key>
+<string>FallMobile advertises presence over Bluetooth so nearby peers can discover you.</string>
+
+<key>UIBackgroundModes</key>
+<array>
+  <string>bluetooth-central</string>
+  <string>bluetooth-peripheral</string>
+</array>
+
+<key>UIRequiresFullScreen</key>
+<true/>

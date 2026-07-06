@@ -1,0 +1,22 @@
+<!--
+  Snippet to merge into android/app/src/main/AndroidManifest.xml after `npx cap add android`.
+  Add these <uses-permission> and <uses-feature> tags inside the <manifest> element,
+  ABOVE the <application> tag.
+
+  Also add xmlns:tools="http://schemas.android.com/tools" to the root <manifest> tag
+  if it's not already present.
+-->
+
+<uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30" />
+
+<uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+    android:usesPermissionFlags="neverForLocation"
+    tools:targetApi="s" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"
+    tools:targetApi="s" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT"
+    tools:targetApi="s" />
+
+<uses-feature android:name="android.hardware.bluetooth_le" android:required="true" />

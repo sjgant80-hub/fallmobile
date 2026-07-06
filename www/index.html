@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>FallMobile</title>
+<meta name="description" content="The estate in your pocket. Bluetooth mesh · sovereign · offline-first.">
+<meta name="theme-color" content="#1a1a1e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231a1a1e'/%3E%3Ctext x='16' y='22' font-family='serif' font-size='18' fill='%237a9c7e' text-anchor='middle'%3E%E2%97%8A%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --void:#1a1a1e;--deep:#212127;--surface:#2a2a30;--raised:#33333a;
+  --line:rgba(232,228,219,0.08);--line2:rgba(232,228,219,0.16);
+  --text:#e8e4db;--muted:#928d80;--dim:#6b6660;
+  --sage:#7a9c7e;--sage-dim:rgba(122,156,126,0.14);
+  --amber:#d4a052;--amber-dim:rgba(212,160,82,0.12);
+  --coral:#d67a5a;
+  --serif:'Cormorant Garamond','Iowan Old Style',Georgia,serif;
+  --sans:'Inter',-apple-system,system-ui,sans-serif;
+  --mono:'JetBrains Mono','IBM Plex Mono',monospace;
+  --tap:48px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--void);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.55;min-height:100vh;overscroll-behavior:none}
+body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:transparent;color:inherit;min-height:var(--tap);min-width:var(--tap)}
+input,textarea{font-family:inherit;background:transparent;color:var(--text);border:none;outline:none;width:100%;font-size:16px}
+h1,h2,h3{font-family:var(--serif);font-weight:400;color:var(--text);line-height:1.2}
+h1{font-size:30px}
+h2{font-size:22px}
+h3{font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:0.14em;font-family:var(--mono);font-weight:500}
+.app{display:grid;grid-template-rows:auto 1fr auto;min-height:100dvh}
+.topbar{background:rgba(26,26,30,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50}
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--serif);font-size:20px}
+.brand .glyph{color:var(--sage)}
+.mesh{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted)}
+.mesh .dot{width:8px;height:8px;border-radius:50%;background:var(--dim);transition:all .3s}
+.mesh .dot.on{background:var(--sage);box-shadow:0 0 8px var(--sage)}
+main{padding:16px;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:24px}
+.view{display:none}
+.view.on{display:block}
+.card{background:var(--deep);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:12px}
+.card h2{margin-bottom:6px}
+.card p{color:var(--muted);font-size:14.5px;margin-bottom:12px}
+.card .meta{font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase}
+.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tool{background:var(--deep);border:1px solid var(--line);border-radius:12px;padding:16px 14px;min-height:96px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;transition:transform .15s,border-color .15s}
+.tool:active{transform:scale(0.97);border-color:var(--sage)}
+.tool .icon{font-size:22px;color:var(--sage)}
+.tool .name{font-family:var(--serif);font-size:18px;color:var(--text)}
+.tool .sub{font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase}
+.tabbar{display:flex;background:var(--deep);border-top:1px solid var(--line2);position:sticky;bottom:0;padding-bottom:env(safe-area-inset-bottom)}
+.tab{flex:1;padding:12px 4px;color:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:4px;border-top:2px solid transparent}
+.tab .ic{font-size:20px}
+.tab.on{color:var(--sage);border-top-color:var(--sage);background:var(--sage-dim)}
+.peer{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--surface);border-radius:10px;margin-bottom:8px}
+.peer .who{display:flex;flex-direction:column;gap:2px}
+.peer .who .did{font-family:var(--mono);font-size:12px;color:var(--text)}
+.peer .who .src{font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase}
+.peer .rssi{font-family:var(--mono);font-size:11px;color:var(--sage)}
+.peer.bitchat .who .src{color:var(--amber)}
+.chat{display:flex;flex-direction:column;gap:8px;padding-bottom:80px}
+.msg{padding:10px 14px;border-radius:12px;max-width:82%;font-size:14.5px;line-height:1.55}
+.msg.in{background:var(--sage-dim);border-left:2px solid var(--sage);align-self:flex-start}
+.msg.out{background:var(--surface);align-self:flex-end;color:var(--text)}
+.msg .who{font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:4px}
+.composer{position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom));background:var(--deep);border:1px solid var(--line2);border-radius:14px;padding:8px 12px;display:flex;gap:8px;align-items:flex-end;box-shadow:0 -6px 20px rgba(0,0,0,0.3);z-index:40}
+.composer textarea{background:transparent;border:none;outline:none;resize:none;font-size:15px;line-height:1.4;min-height:40px;max-height:120px;flex:1;padding:8px 4px}
+.composer button{background:var(--sage);color:var(--void);padding:10px 14px;border-radius:8px;font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;font-weight:700}
+.composer button:disabled{opacity:0.4}
+.big-btn{background:var(--sage);color:var(--void);padding:14px 20px;border-radius:10px;font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;font-weight:700;width:100%;margin-bottom:8px}
+.big-btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line2)}
+.big-btn.danger{background:var(--coral);color:var(--void)}
+.did-box{font-family:var(--mono);font-size:12px;color:var(--sage);padding:12px 14px;background:var(--surface);border-radius:8px;word-break:break-all;margin-bottom:12px}
+.empty{padding:32px 16px;text-align:center;color:var(--muted);font-family:var(--serif);font-size:17px;font-style:italic}
+.pill{display:inline-block;padding:3px 8px;border-radius:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;background:var(--sage-dim);color:var(--sage);margin-left:6px}
+.pill.warn{background:var(--amber-dim);color:var(--amber)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <span class="glyph">◊</span>
+      <span>FallMobile</span>
+    </div>
+    <div class="mesh">
+      <span class="dot" id="mesh-indicator"></span>
+      <span id="mesh-label">idle</span>
+    </div>
+  </div>
+
+  <main>
+
+    <div class="view on" data-view="home">
+      <div class="card">
+        <h2>Estate <em style="color:var(--sage);font-style:italic">on your pocket</em></h2>
+        <p>Native app. Bluetooth mesh. No servers. Bitchat-compatible.</p>
+        <div class="meta">◊ · sovereign · offline-first</div>
+      </div>
+      <h3 style="margin:16px 0 10px">Tools</h3>
+      <div class="tool-grid" id="tools"></div>
+    </div>
+
+    <div class="view" data-view="mesh">
+      <div class="card">
+        <h2>Bluetooth <em style="color:var(--sage);font-style:italic">mesh</em></h2>
+        <p>Peers within about 30 metres. Works with no internet, no cell.</p>
+      </div>
+      <button class="big-btn" id="btn-scan">Start scan</button>
+      <button class="big-btn ghost" id="btn-adv">Toggle advertising</button>
+      <h3 style="margin:16px 0 10px">Peers</h3>
+      <div id="peer-list"><div class="empty">no peers yet · walk toward one</div></div>
+    </div>
+
+    <div class="view" data-view="chat">
+      <div class="chat" id="chat-log">
+        <div class="empty">say hello to the mesh</div>
+      </div>
+      <div class="composer">
+        <textarea id="msg-input" placeholder="broadcast a message..." rows="1"></textarea>
+        <button id="btn-send">Send</button>
+      </div>
+    </div>
+
+    <div class="view" data-view="settings">
+      <div class="card">
+        <h2>Your <em style="color:var(--sage);font-style:italic">identity</em></h2>
+        <p>This DID is generated on first launch and never leaves your device.</p>
+        <div class="did-box" id="did-display">loading...</div>
+        <button class="big-btn ghost" id="btn-copy-did">Copy DID</button>
+        <button class="big-btn danger" id="btn-reset">Reset identity</button>
+      </div>
+      <div class="card">
+        <h2>About</h2>
+        <p>FallMobile v1.0.0 · Capacitor 7 · BLE mesh transport · Bitchat-compatible.</p>
+        <p>Part of the AI-Native Solutions estate.</p>
+        <div class="meta">ainativesolutions.com</div>
+      </div>
+    </div>
+
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab on" data-tab="home"><span class="ic">◊</span><span>Home</span></button>
+    <button class="tab" data-tab="mesh"><span class="ic">≋</span><span>Mesh</span></button>
+    <button class="tab" data-tab="chat"><span class="ic">✦</span><span>Chat</span></button>
+    <button class="tab" data-tab="settings"><span class="ic">⚙</span><span>Settings</span></button>
+  </nav>
+
+</div>
+
+<script src="./foldkit.js"></script>
+<script type="module">
+// Tab wiring
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    const target = t.dataset.tab;
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+    t.classList.add('on');
+    document.querySelector(`.view[data-view="${target}"]`).classList.add('on');
+  });
+});
+
+// Estate tools shown on Home
+const TOOLS = [
+  { name:'FallMirror',    sub:'reflection',  icon:'◊', url:'https://sjgant80-hub.github.io/fallmirror/' },
+  { name:'FallBrief',     sub:'legal',       icon:'§', url:'https://sjgant80-hub.github.io/fallbrief/' },
+  { name:'FallShell',     sub:'portal',      icon:'◈', url:'https://sjgant80-hub.github.io/fallshell/' },
+  { name:'FallColony',    sub:'settlement',  icon:'⛬', url:'https://sjgant80-hub.github.io/fallcolony/' },
+  { name:'FallRouter',    sub:'llm',         icon:'⇌', url:'https://sjgant80-hub.github.io/fallrouter/' },
+  { name:'FallEnterprise',sub:'consultancy', icon:'✦', url:'https://sjgant80-hub.github.io/fallenterprise/' }
+];
+const toolsEl = document.getElementById('tools');
+TOOLS.forEach(t => {
+  const b = document.createElement('button');
+  b.className = 'tool';
+  b.innerHTML = `<div><div class="icon">${t.icon}</div></div><div><div class="name">${t.name}</div><div class="sub">${t.sub}</div></div>`;
+  b.addEventListener('click', () => {
+    // In native, opens system browser; in dev, new tab
+    if (window.Capacitor?.isNativePlatform?.()) {
+      window.open(t.url, '_system');
+    } else {
+      window.open(t.url, '_blank');
+    }
+  });
+  toolsEl.appendChild(b);
+});
+
+// Peer list rendering
+function renderPeers() {
+  const list = document.getElementById('peer-list');
+  const peers = window.FallMobile?.peers?.() ?? [];
+  if (!peers.length) { list.innerHTML = '<div class="empty">no peers yet · walk toward one</div>'; return; }
+  list.innerHTML = peers.map(p => `
+    <div class="peer ${p.source}">
+      <div class="who">
+        <div class="did">${p.did || p.name || p.id.slice(0,10)}</div>
+        <div class="src">${p.source}</div>
+      </div>
+      <div class="rssi">${p.rssi} dBm</div>
+    </div>`).join('');
+}
+setInterval(renderPeers, 2000);
+
+// Buttons
+document.getElementById('btn-scan').addEventListener('click', async () => {
+  try { await window.FallMobile?.ble?.startScan?.(renderPeers); } catch(e){ console.warn(e); }
+});
+document.getElementById('btn-adv').addEventListener('click', async () => {
+  const s = window.FallMobile?.transport?.().ble;
+  try {
+    if (s?.advertising) await window.FallMobile.ble.stopAdvertising();
+    else await window.FallMobile.ble.startAdvertising({ did: window.FallMobile.did });
+  } catch(e){ console.warn(e); }
+});
+
+// Chat
+const chatLog = document.getElementById('chat-log');
+function addMsg(who, text, direction){
+  if (chatLog.querySelector('.empty')) chatLog.innerHTML = '';
+  const div = document.createElement('div');
+  div.className = 'msg ' + direction;
+  div.innerHTML = `<div class="who">${who}</div>${text}`;
+  chatLog.appendChild(div);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+document.getElementById('btn-send').addEventListener('click', async () => {
+  const input = document.getElementById('msg-input');
+  const text = input.value.trim();
+  if (!text) return;
+  addMsg('you', text, 'out');
+  input.value = '';
+  try {
+    await window.FallMobile?.send?.(JSON.stringify({
+      from: window.FallMobile.did, topic:'chat', payload:{text}, ts:Date.now()
+    }));
+  } catch(e){ console.warn(e); }
+});
+
+// Incoming messages · dispatched by fallmobile-transport
+document.addEventListener('fallmobile:incoming', (e) => {
+  const env = e.detail?.env;
+  if (env?.topic === 'chat') addMsg(env.from?.slice(0,10) || 'peer', env.payload?.text || '', 'in');
+});
+
+// Settings
+document.addEventListener('fallmobile:ready', (e) => {
+  document.getElementById('did-display').textContent = e.detail.did;
+});
+document.getElementById('btn-copy-did').addEventListener('click', () => {
+  const d = document.getElementById('did-display').textContent;
+  navigator.clipboard?.writeText(d);
+});
+document.getElementById('btn-reset').addEventListener('click', async () => {
+  if (!confirm('Reset your identity? Peers will no longer recognise you.')) return;
+  const { Preferences } = await import('@capacitor/preferences').catch(()=>({}));
+  if (Preferences) await Preferences.remove({ key:'fallmobile.did' });
+  location.reload();
+});
+</script>
+<script type="module" src="./dist/main.js"></script>
+</body>
+</html>
